@@ -4,9 +4,8 @@ import openai
 import os
 
 app = Flask(__name__)
-CORS(app)  # 启用CORS，允许跨域访问
+CORS(app)  # 允许跨域请求
 
-# 从环境变量读取你的OpenAI API Key
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route('/chat', methods=['POST'])
@@ -19,7 +18,7 @@ def chat():
 
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-4o",  # 可根据实际需求使用其他模型
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant focused on climate change and sustainability."},
                 {"role": "user", "content": user_input}
@@ -29,6 +28,8 @@ def chat():
         return jsonify({'reply': answer})
 
     except Exception as e:
+        # 记录错误，方便在Render后台查看
+        print(f"[ERROR] OpenAI API调用失败: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
